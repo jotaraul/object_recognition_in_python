@@ -1,0 +1,4 @@
+*.pyc
+classifier.txt
+images/
+.idea/
