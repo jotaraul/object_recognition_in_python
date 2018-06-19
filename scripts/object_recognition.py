@@ -73,7 +73,7 @@ print "\nNumber of objects per category in the dataset:"
 print sub_data
 data = data[data['OBJECTCATEGORY'].isin(sub_data.index[0:config.n_object_categories])]
 data['OBJECTCATEGORY'] = data['OBJECTCATEGORY'].cat.remove_unused_categories()
-data[config.gt_vble] = data[config.gt_vble].replace({'upper_cabinet': 'ucabinet'}) # only for Robot@Home dataset
+#data[config.gt_vble] = data[config.gt_vble].replace({'upper_cabinet': 'ucabinet'}) # only for Robot@Home dataset
 
 if config.show_instances_distribution:
     # Visually show the most appearing categories

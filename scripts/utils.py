@@ -148,7 +148,7 @@ def plot_cross_validation():
     """
     ax = plt.gca()
     ax.tick_params(labelsize='16')
-    plt.style.use('seaborn')
+    if 'seaborn' in plt.style.available: plt.style.use('seaborn')
     plt.tight_layout()
     plt.legend(loc=4, prop={'size': 16})
     plt.grid(True)
@@ -269,7 +269,7 @@ def plot_performance_with_sets_of_features(models,
             print models[i]['name'] + ': ' + str(res[i])
             plt.plot(x_axis, res[i], label=models[i]['name'])
 
-    plt.style.use('seaborn')
+    if 'seaborn' in plt.style.available: plt.style.use('seaborn')
     ax = plt.gca()
     ax.tick_params(labelsize='16')
     plt.xlabel('Number of features', **config.axis_font)

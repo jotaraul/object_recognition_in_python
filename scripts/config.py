@@ -19,7 +19,7 @@ vbles_to_work_with = [ 'PLANARITY','SCATTER','LINEARITY','MINHEIGHT','MAXHEIGHT'
                        'VALHIST3','VALHIST4','SATHIST0','SATHIST1','SATHIST2','SATHIST3','SATHIST4' ]
 gt_vble = 'OBJECTCATEGORY'
 n_object_categories = 15
-show_instances_distribution = False
+show_instances_distribution = True
 
 # [DESCRIPTIVE ANALYSIS CONFIGURATION]
 
