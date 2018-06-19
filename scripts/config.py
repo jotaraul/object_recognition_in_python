@@ -1,11 +1,18 @@
-# -*- coding: utf-8 -*-
+"""
+    This module is part of the set of scripts within object_recognition_in_python.
+    These scripts were released by J.R. Ruiz-Sarmiento, and are publicly available at:
 
-# Configuration file
+    https://github.com/jotaraul/object_recognition_in_python
+
+    under the GNUv3 license. Their goal is to show some directions for the utilization
+    of tools writen in Python, like pandas, seaborn or scikit-learn, for the design
+    of object recognition systems.
+"""
 
 # [GENERAL CONFIGURATION]
 
 # Path to the csv file containing the dataset to work with
-dataset_file = 'datasets/robot_at_home.csv'
+dataset_file = '../datasets/robot_at_home.csv'
 # Sets if the dataset must be balanced (e.g. all the categories have the same number of instances)
 balance_dataset = False
 # List of varibales within the dataset to consider (in capital letters)
@@ -50,7 +57,7 @@ standarized_features = True
 # 'GaussianNaiveBayes','QDA','AdaBoost','GradientBoosting']
 models_to_work_with = ['Logistic','SVM','KNeighbors','DecisionTree','RandomForest','ExtraTrees','GaussianNaiveBayes']
 # Number of iterations of the cross validation process
-cross_validation_n_iterations = 500
+cross_validation_n_iterations = 10
 # Number of folds used: cross_validation_n_folds-1 will be used for training, the remaining one for testing
 cross_validation_n_folds = 4
 # Show a confusion matrix?

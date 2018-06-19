@@ -1,37 +1,46 @@
 # -*- coding: utf-8 -*-
 
+"""
+    This module is part of the set of scripts within object_recognition_in_python.
+    These scripts were released by J.R. Ruiz-Sarmiento, and are publicly available at:
+
+    https://github.com/jotaraul/object_recognition_in_python
+
+    under the GNUv3 license. Their goal is to show some directions for the utilization
+    of tools writen in Python, like pandas, seaborn or scikit-learn, for the design
+    of object recognition systems.
+"""
+
+import matplotlib.pyplot as plt
 # General imports
 import numpy as np
-import scipy
-from bisect import bisect
-import time
-
 # For managing and ploting data
 import pandas
+import scipy
 import seaborn
-import matplotlib.pyplot as plt
-
+import time
+from bisect import bisect
+from sklearn import linear_model
+from sklearn import metrics
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
 # scikit-learn imports
 from sklearn import svm
 from sklearn import tree
-from sklearn import linear_model
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, AdaBoostClassifier, GradientBoostingClassifier
-from sklearn.neural_network import MLPClassifier
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, AdaBoostClassifier, \
+    GradientBoostingClassifier
+from sklearn.ensemble import VotingClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import VotingClassifier
-
-from sklearn.model_selection import train_test_split
-from sklearn import preprocessing
 from sklearn.metrics import confusion_matrix
-from sklearn import metrics
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 
-# Tutorial imports
-import config
+# Tutorial local imports
 import utils
+import config
 
 # ---------------------------------------------------------------------------------------------------------------------
 # First step: data managament and analysis
@@ -68,23 +77,7 @@ data[config.gt_vble] = data[config.gt_vble].replace({'upper_cabinet': 'ucabinet'
 
 if config.show_instances_distribution:
     # Visually show the most appearing categories
-    c2 = pandas.value_counts(data[config.gt_vble], sort=True)
-    c3 = pandas.DataFrame(dict(categories=c2.index, count=c2.values)).sort_values(by=['count'], ascending=False)
-
-    blues_pal = seaborn.color_palette("Spectral", config.n_object_categories)
-    my_pal = {}
-    max = c3.values[0][1]
-    for cat in c3.values:
-        my_pal[cat[0]] = blues_pal[int(cat[1] * config.n_object_categories / max)-1]
-    ax = seaborn.barplot(x='count', y='categories', data=c3, alpha=0.8, order=c2.index, palette=my_pal)
-
-    # ax = seaborn.barplot(x='count',y='categories', data=c3, alpha=0.8, order=c2.index)
-    ax.tick_params(labelsize=config.ticks_size)
-    plt.title('Number of instances per category', **config.title_font)
-    plt.xlabel('Number of instances', **config.axis_font)
-    plt.ylabel('Object categories', **config.axis_font)
-    plt.tight_layout()
-    plt.show()
+    utils.plot_instances_distribution(data)
 
 if config.balance_dataset:
     g = data.groupby('OBJECTCATEGORY')
@@ -96,43 +89,14 @@ if config.balance_dataset:
     data = data[data['OBJECTCATEGORY'].isin(c2.index[0:config.n_object_categories])]
     data['OBJECTCATEGORY'] = data['OBJECTCATEGORY'].cat.remove_unused_categories()
 
-# Describe predictors
 if config.describe_vbles:
+    # Describe predictors
     for vble in config.vbles_to_work_with:
         print data[vble].describe()
 
-# Describe predictors graphically
 if config.graphically_describe_vbles:
-    for vble in config.vbles_to_work_with:
-        if config.graphical_representation == 'boxplot':
-            blues_pal = seaborn.color_palette("Spectral", 21)
-            my_pal = {}
-            # mean = []
-            # for cat in data[config.gt_vble].unique():
-            #     mean.append(data.loc[data[config.gt_vble] == cat][vble].mean())
-            # l = np.arange(np.min(mean), np.max(mean), (np.max(mean) - np.min(mean)) / 20.)
-            # for cat in data[config.gt_vble].unique():
-            #     mean.append(data.loc[data[config.gt_vble] ==cat][vble].mean())
-            l = np.arange(data[vble].min(), data[vble].max(), (data[vble].max() - data[vble].min()) / 20.)
-            for cat in data[config.gt_vble].unique():
-                print cat
-                pos = (bisect(l, data.loc[data[config.gt_vble] == cat][vble].mean()))
-                print pos
-                my_pal[cat] = blues_pal[pos]
-            print my_pal
-            ax = seaborn.boxplot(x=vble, y=config.gt_vble, data=data, palette=my_pal)
-            ax.tick_params(labelsize='20')
-            plt.xlabel(vble,**config.axis_font)
-            plt.ylabel('')
-            plt.tight_layout()
-            # plt.savefig('images/img-description-'+str(vble)+'.pdf', bbox_inches='tight')
-        elif config.graphical_representation == 'striplot':
-            seaborn.stripplot(x=vble, y=config.gt_vble, data=data, jitter=True)
-        elif config.graphical_representation == 'swarmplot':
-            seaborn.swarmplot(x=vble, y=config.gt_vble, data=data)
-        elif config.graphical_representation == 'violinplot':
-            seaborn.violinplot(x=vble, y=config.gt_vble, data=data)
-        plt.show()
+    # Describe predictors graphically
+    utils.plot_variables_description()
 
 if config.compute_chi_square_test:
     # Turn predictors into categorical vbles for chi-square test
@@ -141,28 +105,14 @@ if config.compute_chi_square_test:
 
     for vble in config.vbles_to_work_with:
         ct1 = pandas.crosstab(data[config.gt_vble], data[vble + '_C'])
-        # colsum = ct1.sum(axis=0)  # axis=0 sums the columns, axis=1 the row
-        # colpct = ct1 / colsum
-        # print colpct
         print str(vble) + '_C: chi-square value, p value, expected counts'
         cs1 = scipy.stats.chi2_contingency(ct1)
         chi2[0].append(cs1[0])
         chi2[1].append(vble)
         print cs1
-        # print ct1
 
     if config.show_chi_square_test_results:
-        blues_pal = seaborn.color_palette("Spectral", 21)
-        my_pal = {}
-        minimum = np.min(chi2[0])
-        maximum = np.max(chi2[0])
-        ranges = np.arange(minimum, maximum, (maximum - minimum) / 20)
-        for i in range(0, len(chi2[0])):
-            my_pal[config.vbles_to_work_with[i]] = blues_pal[bisect(ranges, chi2[0][i])]
-        df = pandas.DataFrame(dict(chi2=chi2[0], variables=config.vbles_to_work_with))
-        seaborn.barplot(x='chi2', y='variables', data=df, alpha=0.8, palette=my_pal)
-        plt.xlabel('Respuesta test Chi-cuadrado', **config.axis_font)
-        plt.show()
+        utils.plot_chi_square_results(chi2)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Second step: preprocessing
@@ -181,6 +131,7 @@ if config.standarized_features:
 data_X = data[config.vbles_to_work_with]
 data_y = data[config.gt_vble]
 
+# Compute the performance of each model
 models = [{'name': 'Logistic', 'clf': linear_model.LogisticRegression(), 'statistics': utils.statistics()},
           {'name': 'DecisionTree', 'clf': tree.DecisionTreeClassifier(), 'statistics': utils.statistics()},
           {'name': 'RandomForest', 'clf': RandomForestClassifier(), 'statistics': utils.statistics()},
@@ -195,9 +146,8 @@ models = [{'name': 'Logistic', 'clf': linear_model.LogisticRegression(), 'statis
           {'name': 'GradientBoosting', 'clf': GradientBoostingClassifier(), 'statistics': utils.statistics()}
           ]
 
-# Compute the performance of each model
-
-accumulated_cnf_matrix = np.zeros(shape=(config.n_object_categories, config.n_object_categories), dtype=int)
+if config.show_confuion_matrix:
+    accumulated_cnf_matrix = np.zeros(shape=(config.n_object_categories, config.n_object_categories), dtype=int)
 
 print 'Obtaining metrics for..',
 
@@ -229,100 +179,24 @@ for model in models:
                 cnf_matrix = confusion_matrix(y_test, y_pred)
                 accumulated_cnf_matrix = np.add(accumulated_cnf_matrix, cnf_matrix)
 
-        plt.plot(range(1, config.cross_validation_n_iterations + 1), model['statistics'].partial_f1_score,
-             label=model['name'])
+        utils.plot_partial_cross_validation_results(range=range(1, config.cross_validation_n_iterations + 1),
+                                                    metric=model['statistics'].partial_f1_score,
+                                                    label=model['name'])
 
-ax = plt.gca()
-ax.tick_params(labelsize='16')
-plt.style.use('seaborn')
-plt.tight_layout()
-plt.legend(loc=4, prop={'size': 16})
-plt.grid(True)
-plt.xlabel('Numero de iteraciones', **config.axis_font)
-plt.ylabel('Exactitud media', **config.axis_font)
-plt.show()
+utils.plot_cross_validation()
 
 if config.show_confuion_matrix:
     # Show confusion matrix
-    plt.figure()
-    utils.plot_confusion_matrix(accumulated_cnf_matrix, classes=sorted(c2.index[0:config.n_object_categories]), normalize=False,
-                          title='Normalized confusion matrix')
-    plt.figure()
-    utils.plot_confusion_matrix(accumulated_cnf_matrix, classes=sorted(c2.index[0:config.n_object_categories]), normalize=True,
-                          title='Normalized confusion matrix')
-
-    plt.tight_layout()
-    plt.show()
-
+    utils.plot_confusion_matrix(accumulated_cnf_matrix, classes=sorted(c2.index[0:config.n_object_categories]),
+                                normalize=False,
+                                title='Normalized confusion matrix')
+    utils.plot_confusion_matrix(accumulated_cnf_matrix, classes=sorted(c2.index[0:config.n_object_categories]),
+                                normalize=True,
+                                title='Normalized confusion matrix')
 
 if config.show_performance_with_sets_of_features:
     # Show the models performance using a different sets of features
-    res = [[] for i in range(0, len(models))]
-    elapsed_times = []
-    first = True
-    print 'Testing models with different number of features: ',
-
-    while len(chi2[0]) > 1:
-
-        if first:
-            first = False
-        else:
-            minimum = chi2[0].index(min(chi2[0]))
-            del chi2[0][minimum]
-            del chi2[1][minimum]
-            data_X = data[chi2[1]]
-            data_y = data[config.gt_vble]
-
-        print str(len(chi2[0])) + '..',
-
-        model_index = 0
-        start = time.time()
-
-        for model in models:
-
-            if model['name'] in config.models_to_work_with:
-
-                model['statistics'].f1_score = []
-                model['statistics'].accuracy = []
-
-                for try_i in range(0, config.cross_validation_n_iterations):
-                    test_size = 1. / config.cross_validation_n_folds
-                    X_train, X_test, y_train, y_test = train_test_split(data_X, data_y, test_size=test_size)
-
-                    model['clf'].fit(X_train, y_train)
-                    y_pred = model['clf'].predict(X_test)
-                    model['statistics'].f1_score.append(metrics.f1_score(y_test, y_pred, average='micro'))
-                    model['statistics'].accuracy.append(metrics.accuracy_score(y_test, y_pred))
-
-                #print len(model['statistics'].f1_score)
-
-                res[model_index].append(np.mean(model['statistics'].f1_score))
-
-            model_index += 1
-
-        end = time.time()
-        elapsed_times.append(end-start)
-
-    x_axis = list(np.arange(len(config.vbles_to_work_with), 0, -1))
-
-    seaborn.set_palette(seaborn.color_palette("husl", len(config.models_to_work_with)))
-    print '\nElapsed times: ' + str(elapsed_times)
-    print 'Results:'
-
-    for i in range(len(res)):
-        if len(res[i]):
-            print models[i]['name'] + ': ' + str(res[i])
-            plt.plot(x_axis, res[i], label=models[i]['name'])
-
-    plt.style.use('seaborn')
-    ax = plt.gca()
-    ax.tick_params(labelsize='16')
-    plt.xlabel('Numero de caracteristicas', **config.axis_font)
-    plt.ylabel('Exactitud media', **config.axis_font)
-    plt.legend(loc=4,prop={'size': 16})
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
+    utils.plot_performance_with_sets_of_features(models, chi2, data)
 
 
 
