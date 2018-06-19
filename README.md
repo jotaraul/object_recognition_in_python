@@ -2,7 +2,7 @@
 
 ## Description
 
-This repository illustrates the steps needed in the design of a successful object object recognition. It mainly relies on the following python libraries:
+This repository illustrates the steps needed in the design of a successful object recognition model. It mainly relies on the following python libraries:
 
 - [pandas](https://pandas.pydata.org/) for data management.
 - [seaborn](seaborn.pydata.org) for visualization purposes.
