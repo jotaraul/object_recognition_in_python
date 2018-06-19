@@ -1,0 +1,55 @@
++--------------------------------------+---------------------------------------+
+|                                    ABOUT                                     |
++------------------------------------------------------------------------------+
+
+This file contains the list of people involved in the grathering and processing 
+of the Robot at Home dataset (Robot@Home), which started at the
+Machine Perception and Intelligent Robotics (MAPIR) laboratory 
+at the University of Malaga <http://mapir.isa.uma.es>
+
+
+Please let us know if you feel someone is missing.
+
+
++--------------------------------------+---------------------------------------+
+|                          DEVELOPERS & CONTRIBUTORS                           |
++------------------------------------------------------------------------------+
+
+*	J.R. Ruiz-Sarmiento (Main developer)
+	web: http://mapir.isa.uma.es/jotaraul
+	email: jotaraul [at] uma.es	
+
+	
+*	Mariano Jaimez (Developer of DIFODO)
+	webpage: http://mapir.isa.uma.es/mapirwebsite/index.php/people/147-mariano-jaimez-tarifa
+	email: marianojt [at] uma.es
+
+
+*	Eduardo Fernandez-Moral (Extrinsic calibration of RGBD devices)
+	webpage: http://www.irisa.fr/lagadic/team/Eduardo.Fernandez-Moral.html
+	email: eduardo.fernandez-moral [at] inria.fr 
+
+
+
++--------------------------------------+---------------------------------------+
+|                                    OTHERS                                    |
++------------------------------------------------------------------------------+
+
+Sources of inspiration:
+	Javier González
+	Cipriano Galindo
+	Francisco Meléndez
+
+Homes' owners:
+	Maria Sarmiento
+	José Ruiz
+	Antonia Sarmiento
+	Antonio Díaz
+	Samuel Díaz
+	Inma Sarmiento
+	Rocío López
+	Josefa Sarmiento
+ 
+We kindly thank all of them for their valuable support.
+
+
