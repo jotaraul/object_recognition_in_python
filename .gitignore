@@ -2,3 +2,8 @@
 classifier.txt
 images/
 .idea/
+.ipynb_checkpoints/
+scripts/config.pyc
+__init__.pyc
+utils.pyc
+utils_notebook.pyc

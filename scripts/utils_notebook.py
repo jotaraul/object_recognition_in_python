@@ -20,9 +20,6 @@ import seaborn
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 
-import config
-
-
 class statistics:
     def __init__(self):
         self.accuracy = []
@@ -35,8 +32,8 @@ class statistics:
         self.partial_f1_score = []
 
 
-def turn_vbles_to_categorical(data, vbles):
-    n_discrete_values = config.n_discrete_values
+def turn_vbles_to_categorical(data, vbles, config):
+    n_discrete_values = config["n_discrete_values"]
     quatile_ranges = np.arange(0, 1., 1.0 / n_discrete_values).tolist()
     quatile_ranges.append(1)
 
@@ -51,33 +48,33 @@ def turn_vbles_to_categorical(data, vbles):
         data[categorical_numerical_name] = pandas.to_numeric(data[categorical_name], errors="coerce")
 
 
-def plot_instances_distribution(data):
+def plot_instances_distribution(data, config):
     """ Plots the distribution of the instances within a given dataset according to their categories.
 
     Args:
         data (dataframe): Dataset loaded by pandas.
 
     """
-    c2 = pandas.value_counts(data[config.gt_vble], sort=True)
+    c2 = pandas.value_counts(data[config["gt_vble"]], sort=True)
     c3 = pandas.DataFrame(dict(categories=c2.index, count=c2.values)).sort_values(by=['count'], ascending=False)
 
-    blues_pal = seaborn.color_palette("Spectral", config.n_object_categories)
+    blues_pal = seaborn.color_palette("Spectral", config["n_object_categories"])
     my_pal = {}
     max = c3.values[0][1]
     for cat in c3.values:
-        my_pal[cat[0]] = blues_pal[int(cat[1] * config.n_object_categories / max) - 1]
+        my_pal[cat[0]] = blues_pal[int(cat[1] * config["n_object_categories"] / max) - 1]
     ax = seaborn.barplot(x='count', y='categories', data=c3, alpha=0.8, order=c2.index, palette=my_pal)
 
     # ax = seaborn.barplot(x='count',y='categories', data=c3, alpha=0.8, order=c2.index)
-    ax.tick_params(labelsize=config.ticks_size)
-    plt.title('Number of instances per category', **config.title_font)
-    plt.xlabel('Number of instances', **config.axis_font)
-    plt.ylabel('Object categories', **config.axis_font)
+    ax.tick_params(labelsize=config["ticks_size"])
+    plt.title('Number of instances per category', **config["title_font"])
+    plt.xlabel('Number of instances', **config["axis_font"])
+    plt.ylabel('Object categories', **config["axis_font"])
     plt.tight_layout()
     plt.show()
 
 
-def plot_variables_description(data):
+def plot_variables_description(data, config):
     """ Plots, for each variable (feature) describing the objects in the dataset, a plot showing how their
     values are distributed for each object category.
 
@@ -85,39 +82,39 @@ def plot_variables_description(data):
         data (dataframe): Dataset loaded by pandas.
 
     """
-    for vble in config.vbles_to_work_with:
-        if config.graphical_representation == 'boxplot':
+    for vble in config["vbles_to_work_with"]:
+        if config["graphical_representation"] == 'boxplot':
             blues_pal = seaborn.color_palette("Spectral", 21)
             my_pal = {}
             # mean = []
-            # for cat in data[config.gt_vble].unique():
-            #     mean.append(data.loc[data[config.gt_vble] == cat][vble].mean())
+            # for cat in data[config["gt_vble"]].unique():
+            #     mean.append(data.loc[data[config["gt_vble"]] == cat][vble].mean())
             # l = np.arange(np.min(mean), np.max(mean), (np.max(mean) - np.min(mean)) / 20.)
-            # for cat in data[config.gt_vble].unique():
-            #     mean.append(data.loc[data[config.gt_vble] ==cat][vble].mean())
+            # for cat in data[config["gt_vble"]].unique():
+            #     mean.append(data.loc[data[config["gt_vble"]] ==cat][vble].mean())
             l = np.arange(data[vble].min(), data[vble].max(), (data[vble].max() - data[vble].min()) / 20.)
-            for cat in data[config.gt_vble].unique():
+            for cat in data[config["gt_vble"]].unique():
                 print cat
-                pos = (bisect(l, data.loc[data[config.gt_vble] == cat][vble].mean()))
+                pos = (bisect(l, data.loc[data[config["gt_vble"]] == cat][vble].mean()))
                 print pos
                 my_pal[cat] = blues_pal[pos]
             print my_pal
-            ax = seaborn.boxplot(x=vble, y=config.gt_vble, data=data, palette=my_pal)
+            ax = seaborn.boxplot(x=vble, y=config["gt_vble"], data=data, palette=my_pal)
             ax.tick_params(labelsize='20')
-            plt.xlabel(vble, **config.axis_font)
+            plt.xlabel(vble, **config["axis_font"])
             plt.ylabel('')
             plt.tight_layout()
             # plt.savefig('images/img-description-'+str(vble)+'.pdf', bbox_inches='tight')
-        elif config.graphical_representation == 'striplot':
-            seaborn.stripplot(x=vble, y=config.gt_vble, data=data, jitter=True)
-        elif config.graphical_representation == 'swarmplot':
-            seaborn.swarmplot(x=vble, y=config.gt_vble, data=data)
-        elif config.graphical_representation == 'violinplot':
-            seaborn.violinplot(x=vble, y=config.gt_vble, data=data)
+        elif config["graphical_representation"] == 'striplot':
+            seaborn.stripplot(x=vble, y=config["gt_vble"], data=data, jitter=True)
+        elif config["graphical_representation"] == 'swarmplot':
+            seaborn.swarmplot(x=vble, y=config["gt_vble"], data=data)
+        elif config["graphical_representation"] == 'violinplot':
+            seaborn.violinplot(x=vble, y=config["gt_vble"], data=data)
         plt.show()
 
 
-def plot_chi_square_values(chi2):
+def plot_chi_square_values(chi2, config):
     """ Plots the results of doing a chi-square test to all the used variables (features).
 
     Args:
@@ -130,10 +127,10 @@ def plot_chi_square_values(chi2):
     maximum = np.max(chi2[0])
     ranges = np.arange(minimum, maximum, (maximum - minimum) / 20)
     for i in range(0, len(chi2[0])):
-        my_pal[config.vbles_to_work_with[i]] = blues_pal[bisect(ranges, chi2[0][i])]
-    df = pandas.DataFrame(dict(chi2=chi2[0], variables=config.vbles_to_work_with))
+        my_pal[config["vbles_to_work_with"][i]] = blues_pal[bisect(ranges, chi2[0][i])]
+    df = pandas.DataFrame(dict(chi2=chi2[0], variables=config["vbles_to_work_with"]))
     seaborn.barplot(x='chi2', y='variables', data=df, alpha=0.8, palette=my_pal)
-    plt.xlabel('Chi-square results', **config.axis_font)
+    plt.xlabel('Chi-square results', **config["axis_font"])
     plt.show()
 
 
@@ -143,7 +140,7 @@ def plot_partial_cross_validation_results(range,
     plt.plot(range, metric,label=label)
 
 
-def plot_cross_validation():
+def plot_cross_validation(config):
     """ Configures the plot for showing the cross validation results.
     """
     ax = plt.gca()
@@ -152,8 +149,8 @@ def plot_cross_validation():
     plt.tight_layout()
     plt.legend(loc=4, prop={'size': 16})
     plt.grid(True)
-    plt.xlabel('Number of iterations', **config.axis_font)
-    plt.ylabel('Mean accuracy', **config.axis_font)
+    plt.xlabel('Number of iterations', **config["axis_font"])
+    plt.ylabel('Mean accuracy', **config["axis_font"])
     plt.show()
 
 
@@ -199,7 +196,8 @@ def plot_confusion_matrix(cm, classes,
 
 def plot_performance_with_sets_of_features(models,
                                            chi2,
-                                           data):
+                                           data,
+					   config):
     """ Plots the performance of the given models depending on the number of features used for describing
     the features. For that, all the features are used initially to fit the models, and iteratively a feature
     is removed (according to their discriminative power reported by the chi-square test).
@@ -210,8 +208,8 @@ def plot_performance_with_sets_of_features(models,
         data (dataframe): Dataset loaded by pandas.
 
     """
-    data_X = data[config.vbles_to_work_with]
-    data_y = data[config.gt_vble]
+    data_X = data[config["vbles_to_work_with"]]
+    data_y = data[config["gt_vble"]]
     res = [[] for i in range(0, len(models))]
     elapsed_times = []
     first = True
@@ -226,7 +224,7 @@ def plot_performance_with_sets_of_features(models,
             del chi2[0][minimum]
             del chi2[1][minimum]
             data_X = data[chi2[1]]
-            data_y = data[config.gt_vble]
+            data_y = data[config["gt_vble"]]
 
         print str(len(chi2[0])) + '..',
 
@@ -235,13 +233,13 @@ def plot_performance_with_sets_of_features(models,
 
         for model in models:
 
-            if model['name'] in config.models_to_work_with:
+            if model['name'] in config["models_to_work_with"]:
 
                 model['statistics'].f1_score = []
                 model['statistics'].accuracy = []
 
-                for try_i in range(0, config.cross_validation_n_iterations):
-                    test_size = 1. / config.cross_validation_n_folds
+                for try_i in range(0, config["cross_validation_n_iterations"]):
+                    test_size = 1. / config["cross_validation_n_folds"]
                     X_train, X_test, y_train, y_test = train_test_split(data_X, data_y, test_size=test_size)
 
                     model['clf'].fit(X_train, y_train)
@@ -258,9 +256,9 @@ def plot_performance_with_sets_of_features(models,
         end = time.time()
         elapsed_times.append(end-start)
 
-    x_axis = list(np.arange(len(config.vbles_to_work_with), 0, -1))
+    x_axis = list(np.arange(len(config["vbles_to_work_with"]), 0, -1))
 
-    seaborn.set_palette(seaborn.color_palette("husl", len(config.models_to_work_with)))
+    seaborn.set_palette(seaborn.color_palette("husl", len(config["models_to_work_with"])))
     # print '\nElapsed times: ' + str(elapsed_times)
     # print 'Results:'
 
@@ -272,8 +270,8 @@ def plot_performance_with_sets_of_features(models,
     if 'seaborn' in plt.style.available: plt.style.use('seaborn')
     ax = plt.gca()
     ax.tick_params(labelsize='16')
-    plt.xlabel('Number of features', **config.axis_font)
-    plt.ylabel('Mean accuracy', **config.axis_font)
+    plt.xlabel('Number of features', **config["axis_font"])
+    plt.ylabel('Mean accuracy', **config["axis_font"])
     plt.legend(loc=4,prop={'size': 16})
     plt.grid(True)
     plt.tight_layout()
