@@ -23,6 +23,11 @@ For that it is provided par of the [Robot@Home](http://mapir.isa.uma.es/work/rob
 
 Author: J.R. Ruiz-Sarmiento [(homepage)](http://mapir.isa.uma.es/jotaraul)
 
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/8874841/41841726-5724237c-7869-11e8-9710-0b9cb975ebb8.png" width="49%" />
+  <img src="https://user-images.githubusercontent.com/8874841/41841729-575c6f3e-7869-11e8-823d-1c2f4e009931.png" width="49%" /> 
+</p>
+
 ## Content
 
 The tutorial is divided into three scripts, each one with a clearly defined purpose:
