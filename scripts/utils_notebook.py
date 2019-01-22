@@ -94,11 +94,11 @@ def plot_variables_description(data, config):
             #     mean.append(data.loc[data[config["gt_vble"]] ==cat][vble].mean())
             l = np.arange(data[vble].min(), data[vble].max(), (data[vble].max() - data[vble].min()) / 20.)
             for cat in data[config["gt_vble"]].unique():
-                print cat
+                print (cat)
                 pos = (bisect(l, data.loc[data[config["gt_vble"]] == cat][vble].mean()))
-                print pos
+                print (pos)
                 my_pal[cat] = blues_pal[pos]
-            print my_pal
+            print (my_pal)
             ax = seaborn.boxplot(x=vble, y=config["gt_vble"], data=data, palette=my_pal)
             ax.tick_params(labelsize='20')
             plt.xlabel(vble, **config["axis_font"])
@@ -213,7 +213,7 @@ def plot_performance_with_sets_of_features(models,
     res = [[] for i in range(0, len(models))]
     elapsed_times = []
     first = True
-    print 'Testing models with different number of features: ',
+    print ('Testing models with different number of features: '),
 
     while len(chi2[0]) > 1:
 
@@ -226,7 +226,7 @@ def plot_performance_with_sets_of_features(models,
             data_X = data[chi2[1]]
             data_y = data[config["gt_vble"]]
 
-        print str(len(chi2[0])) + '..',
+        print (str(len(chi2[0])) + '..'),
 
         model_index = 0
         start = time.time()
