@@ -2,6 +2,8 @@
 
 ## Description
 
+**New!** Now you can try the notebook using binder -> [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jotaraul/object_recognition_in_python/master?filepath=Object_recognition_in_python.ipynb)
+
 This repository illustrates the steps needed in the design of a successful object recognition model. It mainly relies on the following python libraries:
 
 - [pandas](https://pandas.pydata.org/) for data management.
@@ -19,7 +21,7 @@ Using that tools, and in less than 150 lines of code, it is shown how to:
   - a confusion matrix,
   - and different features to fit the model.
 
-For that it is provided par of the [Robot@Home](http://mapir.isa.uma.es/work/robot-at-home-dataset) dataset, facilitating the description of more than 2k object instances.
+For that it is provided part of the [Robot@Home](http://mapir.isa.uma.es/work/robot-at-home-dataset) dataset, facilitating the description of more than 2k object instances.
 
 Author: J.R. Ruiz-Sarmiento [(homepage)](http://mapir.isa.uma.es/jotaraul)
 
